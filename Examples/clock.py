@@ -62,7 +62,7 @@ while True:
 
     
     if armbottom == "h":
-	arm3 = list(binhour)
+	    arm3 = list(binhour)
     elif armbottom == "m":
         arm3 = list(binmin)
     else:
@@ -81,7 +81,7 @@ while True:
     piglow.led(18,led18)
 
     if armright == "h":
-	arm2 = list(binhour)
+	    arm2 = list(binhour)
     elif armright == "m":
         arm2 = list(binmin)
     else:
@@ -101,7 +101,7 @@ while True:
 
 
     if armtop == "h":
-	arm1 = list(binhour)
+     	arm1 = list(binhour)
     elif armtop == "m":
         arm1 = list(binmin)
     else:
