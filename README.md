@@ -1,3 +1,5 @@
+## This is a fork of PiGlow to make it usable in python3. The original developer is @Boeeerb and they get all the credit for the work on this. I have updated some code to make it run on python3 and added some comments in the documentation where applicable. I'm running this on a Raspberry pi 2 on Raspbian 14.2.0-19. The original repo is located here -> https://github.com/Boeeerb/PiGlow
+
 ## PiGlow
 
 Here is a small Python module for the PiGlow addon by Pimoroni, it will let you flex the LED muscles of this fantastic addon.
