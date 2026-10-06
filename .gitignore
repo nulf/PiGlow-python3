@@ -213,3 +213,6 @@ pip-log.txt
 
 #Mr Developer
 .mr.developer.cfg
+
+#Ignore module file when it has been copied to examples folder
+Examples/piglow.py
