@@ -2,6 +2,8 @@
 ## Test the brightness of all the LEDs together ##
 ##                                              ##
 ## Example by Jason - @Boeeerb                  ##
+##                                              ##
+## Ported to python 3 by nulf - @nulf           ##
 ##################################################
 
 from piglow import PiGlow

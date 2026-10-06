@@ -1,10 +1,15 @@
-#####################################################
-## Python module to control the PiGlow by Pimoroni ##
-##                                                 ##
-## Written by Jason - @Boeeerb  -  v0.5  17/08/13  ##
-##            jase@boeeerb.co.uk                   ##
-#####################################################
+####################################################################
+## Python module to control the PiGlow by Pimoroni                ##
+##                                                                ##
+## Original Written by Jason - @Boeeerb  -  v0.5  17/08/13        ##
+##            jase@boeeerb.co.uk                                  ##
+##                                                                ##
+## Python 3 port written by nulf - @nulf - v0.6 07/10/26          ##
+##            u@nulf.se                                           ##
+##                                                                ##
+####################################################################
 ##
+## v0.6 - Port module to python 3            - 07/10/26
 ## v0.5 - Add RPI VER 3 for model B+         - 26/08/14
 ## v0.4 - Auto detect Raspberry Pi revision  - 17/08/13
 ## v0.3 - Added fix from topshed             - 17/08/13
@@ -12,23 +17,30 @@
 ## v0.1 - Initial release                    - 15/08/13
 ##
 
-from smbus import SMBus
-import RPi.GPIO as rpi
+try:
+    from smbus import SMBus
+except ImportError:
+    from smbus2 import SMBus
 
-bus = 0
+def _detect_i2c_bus():
+    """Only the original 256MB Model B (board revision 1) wired the PiGlow's
+    I2C pins to bus 0; every later board, Pi 2 included, uses bus 1."""
+    try:
+        import RPi.GPIO as rpi
+    except ImportError:
+        return 1
+
+    revision = getattr(rpi, "RPI_INFO", {}).get("P1_REVISION")
+    if revision is None:
+        revision = getattr(rpi, "RPI_REVISION", None)
+
+    return 0 if revision == 1 else 1
 
 class PiGlow:
 
-    def __init__(self):
-        if rpi.RPI_REVISION == 1:
-            i2c_bus = 0
-        elif rpi.RPI_REVISION == 2:
-            i2c_bus = 1
-        elif rpi.RPI_REVISION == 3:
-            i2c_bus = 1
-        else:
-            print "Unable to determine Raspberry Pi revision."
-            exit
+    def __init__(self, i2c_bus=None):
+        if i2c_bus is None:
+            i2c_bus = _detect_i2c_bus()
 
         self.bus = SMBus(i2c_bus)
         self.bus.write_i2c_block_data(0x54, 0x00, [0x01])
@@ -80,31 +92,13 @@ class PiGlow:
 
     def arm(self, arm, value):
         if arm == 1:
-            self.bus.write_byte_data(0x54, 0x07, value)
-            self.bus.write_byte_data(0x54, 0x08, value)
-            self.bus.write_byte_data(0x54, 0x09, value)
-            self.bus.write_byte_data(0x54, 0x06, value)
-            self.bus.write_byte_data(0x54, 0x05, value)
-            self.bus.write_byte_data(0x54, 0x0A, value)
-            self.bus.write_byte_data(0x54, 0x16, 0xFF)
+            self.arm1(value)
         elif arm == 2:
-            self.bus.write_byte_data(0x54, 0x0B, value)
-            self.bus.write_byte_data(0x54, 0x0C, value)
-            self.bus.write_byte_data(0x54, 0x0E, value)
-            self.bus.write_byte_data(0x54, 0x10, value)
-            self.bus.write_byte_data(0x54, 0x11, value)
-            self.bus.write_byte_data(0x54, 0x12, value)
-            self.bus.write_byte_data(0x54, 0x16, 0xFF)
+            self.arm2(value)
         elif arm == 3:
-            self.bus.write_byte_data(0x54, 0x01, value)
-            self.bus.write_byte_data(0x54, 0x02, value)
-            self.bus.write_byte_data(0x54, 0x03, value)
-            self.bus.write_byte_data(0x54, 0x04, value)
-            self.bus.write_byte_data(0x54, 0x0F, value)
-            self.bus.write_byte_data(0x54, 0x0D, value)
-            self.bus.write_byte_data(0x54, 0x16, 0xFF)
+            self.arm3(value)
         else:
-            print "Unknown number, expected only 1, 2 or 3"
+            raise ValueError("Unknown arm %r, expected only 1, 2 or 3" % (arm,))
 
     def arm1(self, value):
         self.bus.write_byte_data(0x54, 0x07, value)
@@ -135,41 +129,19 @@ class PiGlow:
 
     def colour(self, colour, value):
         if colour == 1 or colour == "white":
-            self.bus.write_byte_data(0x54, 0x0A, value)
-            self.bus.write_byte_data(0x54, 0x0B, value)
-            self.bus.write_byte_data(0x54, 0x0D, value)
-            self.bus.write_byte_data(0x54, 0x16, 0xFF)
-
+            self.white(value)
         elif colour == 2 or colour == "blue":
-            self.bus.write_byte_data(0x54, 0x05, value)
-            self.bus.write_byte_data(0x54, 0x0C, value)
-            self.bus.write_byte_data(0x54, 0x0F, value)
-            self.bus.write_byte_data(0x54, 0x16, 0xFF)
-
+            self.blue(value)
         elif colour == 3 or colour == "green":
-            self.bus.write_byte_data(0x54, 0x06, value)
-            self.bus.write_byte_data(0x54, 0x04, value)
-            self.bus.write_byte_data(0x54, 0x0E, value)
-            self.bus.write_byte_data(0x54, 0x16, 0xFF)
-
+            self.green(value)
         elif colour == 4 or colour == "yellow":
-            self.bus.write_byte_data(0x54, 0x09, value)
-            self.bus.write_byte_data(0x54, 0x03, value)
-            self.bus.write_byte_data(0x54, 0x10, value)
-            self.bus.write_byte_data(0x54, 0x16, 0xFF)
-
+            self.yellow(value)
         elif colour == 5 or colour == "orange":
-            self.bus.write_byte_data(0x54, 0x08, value)
-            self.bus.write_byte_data(0x54, 0x02, value)
-            self.bus.write_byte_data(0x54, 0x11, value)
-            self.bus.write_byte_data(0x54, 0x16, 0xFF)
+            self.orange(value)
         elif colour == 6 or colour == "red":
-            self.bus.write_byte_data(0x54, 0x07, value)
-            self.bus.write_byte_data(0x54, 0x01, value)
-            self.bus.write_byte_data(0x54, 0x12, value)
-            self.bus.write_byte_data(0x54, 0x16, 0xFF)
+            self.red(value)
         else:
-            print "Only colours 1 - 6 or color names are allowed"
+            raise ValueError("Only colours 1 - 6 or colour names are allowed")
 
     def led(self, led, value):
         leds = [

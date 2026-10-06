@@ -1,8 +1,10 @@
-######################################
-## A binary clock using the PiGlow  ##
-##                                  ##
-##  Example by Jason - @Boeeerb     ##
-######################################
+########################################
+## A binary clock using the PiGlow    ##
+##                                    ##
+##  Example by Jason - @Boeeerb       ##
+##                                    ##
+## Ported to python 3 by nulf - @nulf ##
+########################################
 
 from piglow import PiGlow
 from time import sleep

@@ -4,6 +4,8 @@
 ## Requires psutil - sudo apt-get install python-psutil ##
 ##                                                      ##
 ## Example by Jason - @Boeeerb                          ##
+##                                                      ##
+## Ported to python 3 by nulf - @nulf                   ##
 ##########################################################
 
 from piglow import PiGlow

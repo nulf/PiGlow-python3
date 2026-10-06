@@ -19,8 +19,8 @@ Here is a small Python module for the PiGlow addon by Pimoroni, it will let you 
 
 ## Requirements
 
-    sudo apt-get install python-smbus
-    sudo apt-get install python-psutil
+    sudo apt-get install python3-smbus
+    sudo apt-get install python3-psutil
 
 
 ## Functions
@@ -56,7 +56,7 @@ All colours are from 0 (off) to 255 (super duper eye numbing bright!)
 First to download and install the required libraries
 
     sudo apt-get update
-    sudo apt-get install python-smbus python-psutil -y
+    sudo apt-get install python3-smbus python3-psutil -y
 
 
  - SMBus is required to talk over i2c bus with the PiGlow
@@ -65,7 +65,7 @@ First to download and install the required libraries
 
 To enable the i2c driver you need to make a few changes
 
-    sudo nano /etc/modules
+    sudo vi /etc/modules
 
 Then make sure the following is at the end of the file
 
@@ -80,6 +80,7 @@ So it looks like this:
 Ctrl + x and Y to exit save the file, now edit the next
 
     sudo nano /etc/modprobe.d/raspi-blacklist.conf
+    (I don't think this is needed at all on newer Raspbian versions //Ulf)
 
 And add the #'s to the beginning of each line so it looks like:
 
